@@ -1,0 +1,691 @@
+{
+  "name": "ai-order-processing-pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -400,
+        -96
+      ],
+      "id": "14e2888a-91f2-49f9-a585-45e24b42db23",
+      "name": "Check for New Orders"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "YOUR_AIRTABLE_BASE_ID",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        },
+        "table": {
+          "__rl": true,
+          "value": "YOUR_TABLE_ID",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        },
+        "filterByFormula": "={Status} = \"Pending\"",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        -176,
+        -96
+      ],
+      "id": "3cb9644c-8ef9-47be-8c93-df0581e56a46",
+      "name": "Find Pending Orders",
+      "credentials": {
+        "airtableTokenApi": {
+          "name": "Airtable Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "YOUR_AIRTABLE_BASE_ID",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        },
+        "table": {
+          "__rl": true,
+          "value": "YOUR_TABLE_ID",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Find Pending Orders').item.json.id }}",
+            "Status": "Error"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Order Number",
+              "displayName": "Order Number",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Customer",
+              "displayName": "Customer",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Product",
+              "displayName": "Product",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Quantity",
+              "displayName": "Quantity",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Price",
+              "displayName": "Price",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "In Progress",
+                  "value": "In Progress"
+                },
+                {
+                  "name": "Shipped",
+                  "value": "Shipped"
+                },
+                {
+                  "name": "Completed",
+                  "value": "Completed"
+                },
+                {
+                  "name": "Cancelled",
+                  "value": "Cancelled"
+                },
+                {
+                  "name": "Error",
+                  "value": "Error"
+                },
+                {
+                  "name": "Pending",
+                  "value": "Pending"
+                },
+                {
+                  "name": "Processing",
+                  "value": "Processing"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        848,
+        0
+      ],
+      "id": "ccd1fdbe-166c-4bc5-9ca4-3cd11a48f365",
+      "name": "Mark as Error",
+      "credentials": {
+        "airtableTokenApi": {
+          "name": "Airtable Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "YOUR_AIRTABLE_BASE_ID",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        },
+        "table": {
+          "__rl": true,
+          "value": "YOUR_TABLE_ID",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "Processing",
+            "id": "={{ $json.id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Order Number",
+              "displayName": "Order Number",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Customer",
+              "displayName": "Customer",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Product",
+              "displayName": "Product",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Quantity",
+              "displayName": "Quantity",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Price",
+              "displayName": "Price",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "In Progress",
+                  "value": "In Progress"
+                },
+                {
+                  "name": "Shipped",
+                  "value": "Shipped"
+                },
+                {
+                  "name": "Completed",
+                  "value": "Completed"
+                },
+                {
+                  "name": "Cancelled",
+                  "value": "Cancelled"
+                },
+                {
+                  "name": "Error",
+                  "value": "Error"
+                },
+                {
+                  "name": "Pending",
+                  "value": "Pending"
+                },
+                {
+                  "name": "Processing",
+                  "value": "Processing"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        48,
+        -96
+      ],
+      "id": "0c4697d6-213d-4207-8272-e3d09a205b09",
+      "name": "Mark as Processing",
+      "credentials": {
+        "airtableTokenApi": {
+          "name": "Airtable Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "operations@example.com",
+        "subject": "={{ $json.output[0].content[0].text.email_subject }}",
+        "message": "=<div style=\"font-family: Arial, Helvetica, sans-serif; background-color: #f6f8fa; padding: 24px; color: #222;\">\n  <div style=\"max-width: 640px; background-color: #ffffff; border: 1px solid #e5e7eb; border-radius: 10px; overflow: hidden;\">\n\n    <div style=\"background-color: #111827; color: #ffffff; padding: 20px 24px;\">\n      <h2 style=\"margin: 0; font-size: 22px;\">📦 New Customer Order</h2>\n      <p style=\"margin: 6px 0 0; color: #d1d5db; font-size: 14px;\">Order Ready for Review</p>\n    </div>\n\n    <div style=\"padding: 24px;\">\n      <div style=\"background:#eff6ff;\n        border:1px solid #bfdbfe;\n        color:#1e3a8a;\n        padding:14px 16px;\n        border-radius:8px;\n        margin-bottom:24px;\n        font-size:14px;\"> ℹ️ A new customer order has been received and is awaiting operations review.\n    </div>\n\n      <h3 style=\"font-size: 16px; margin: 24px 0 12px;\">📋 Order Details</h3>\n\n      <table style=\"border-collapse: collapse; width: 100%; font-size: 14px;\">\n        <tr>\n          <td style=\"padding: 10px 12px; border: 1px solid #e5e7eb; background-color: #f9fafb; font-weight: bold; width: 35%;\">Order #</td>\n          <td style=\"padding: 10px 12px; border: 1px solid #e5e7eb;\">{{ $('Mark as Processing').item.json.fields['Order Number'] }}</td>\n        </tr>\n        <tr>\n          <td style=\"padding: 10px 12px; border: 1px solid #e5e7eb; background-color: #f9fafb; font-weight: bold;\">Customer</td>\n          <td style=\"padding: 10px 12px; border: 1px solid #e5e7eb;\">{{ $('Mark as Processing').item.json.fields.Customer }}</td>\n        </tr>\n        <tr>\n          <td style=\"padding: 10px 12px; border: 1px solid #e5e7eb; background-color: #f9fafb; font-weight: bold;\">Product</td>\n          <td style=\"padding: 10px 12px; border: 1px solid #e5e7eb;\">{{ $('Mark as Processing').item.json.fields.Product }}</td>\n        </tr>\n        <tr>\n          <td style=\"padding: 10px 12px; border: 1px solid #e5e7eb; background-color: #f9fafb; font-weight: bold;\">Quantity</td>\n          <td style=\"padding: 10px 12px; border: 1px solid #e5e7eb;\">{{ $('Mark as Processing').item.json.fields.Quantity }}</td>\n        </tr>\n        <tr>\n          <td style=\"padding: 10px 12px; border: 1px solid #e5e7eb; background-color: #f9fafb; font-weight: bold;\">Price</td>\n          <td style=\"padding: 10px 12px; border: 1px solid #e5e7eb;\">${{ Number($('Mark as Processing').item.json.fields.Price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</td>\n        </tr>\n        <tr>\n          <td style=\"padding: 10px 12px; border: 1px solid #e5e7eb; background-color: #f9fafb; font-weight: bold;\">Order Date</td>\n          <td style=\"padding: 10px 12px; border: 1px solid #e5e7eb;\">{{ DateTime.fromISO($('Mark as Processing').item.json.fields.Date).toFormat('MMMM d, yyyy') }}</td>\n        </tr>\n        <tr>\n          <td style=\"padding: 10px 12px; border: 1px solid #e5e7eb; background-color: #f9fafb; font-weight: bold;\">Status</td>\n          <td style=\"padding: 10px 12px; border: 1px solid #e5e7eb;\">\n            <span style=\"display: inline-block; background-color: #fef3c7; color: #92400e; padding: 3px 8px; border-radius: 999px; font-size: 12px; font-weight: bold;\">\n              {{ $('Mark as Processing').item.json.fields.Status }}\n            </span>\n          </td>\n        </tr>\n      </table>\n\n      <h3 style=\"font-size: 16px; margin: 24px 0 12px;\"> 🤖 AI Fulfillment Summary </h3>\n\n      <div style=\"background-color: #f9fafb; border-left: 4px solid #2563eb; padding: 14px 16px; font-size: 14px;\">\n        {{ $json.output[0].content[0].text.order_summary }}\n      </div>\n\n      <p style=\"margin-top: 24px;\">Please review this order and begin processing.</p>\n\n      <hr style=\"margin:32px 0 20px;border:none;border-top:1px solid #e5e7eb;\">\n\n        <p style=\"margin:0;font-size:14px;font-weight:bold;color:#374151;\">AI Order Processing Pipeline</p>\n        <p style=\"margin:4px 0 0;font-size:12px;color:#6b7280;\">Automated Operations Notification</p>\n    </div>\n\n  </div>\n</div>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        624,
+        -96
+      ],
+      "id": "89eebe2d-0a32-4ca2-9be8-91b1e8e8b961",
+      "name": "Notify Operations Team",
+      "credentials": {
+        "gmailOAuth2": {
+          "name": "Gmail Account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=You are an AI assistant helping an internal operations team process customer orders.\n\nYour task is to generate a short, professional order summary for the Operations Team.\n\nUse only the information provided. Do not invent missing details. Do not change order numbers, prices, quantities, dates, customer names, or product names.\n\nOrder Information:\nOrder #: {{ $json.fields['Order Number'] }}\nCustomer: {{ $json.fields.Customer }}\nProduct: {{ $json.fields.Product }}\nQuantity: {{ $json.fields.Quantity }}\nPrice: {{ $json.fields.Price }}\nOrder Date: {{ $json.fields.Date }}\nStatus: {{ $json.fields.Status }}\n\nReturn valid JSON only with the following fields:\n\nemail_subject\norder_summary\n\nRules:\n- email_subject must be: New Customer Order Summary - Order # followed by the order number.\n- order_summary should be a single concise sentence (20–25 words maximum).\n- Focus on the next actions required by the Operations Team.\n- Do not repeat the customer, product, quantity, price, date, or status.\n- Do not describe work as already being completed.\n- Use action-oriented language beginning with \"Please...\"\n- Do not include greetings or sign-offs.\n- Return valid JSON only.\n\nExample:\n\n{\n  \"email_subject\": \"New Customer Order Summary - Order #123\",\n  \"order_summary\": \"Please verify inventory, initiate assembly, and update the order status as fulfillment progresses.\"\n}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "textFormat": {
+            "textOptions": {
+              "type": "json_object"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        272,
+        -96
+      ],
+      "id": "81998d7a-b9ec-4ef9-b5fc-d72c34a5ca2f",
+      "name": "Generate AI Order Summary",
+      "credentials": {
+        "openAiApi": {
+          "name": "OpenAI Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "YOUR_AIRTABLE_BASE_ID",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        },
+        "table": {
+          "__rl": true,
+          "value": "YOUR_TABLE_ID",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "In Progress",
+            "id": "={{ $('Mark as Processing').item.json.id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Order Number",
+              "displayName": "Order Number",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Customer",
+              "displayName": "Customer",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Product",
+              "displayName": "Product",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Quantity",
+              "displayName": "Quantity",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Price",
+              "displayName": "Price",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "In Progress",
+                  "value": "In Progress"
+                },
+                {
+                  "name": "Shipped",
+                  "value": "Shipped"
+                },
+                {
+                  "name": "Completed",
+                  "value": "Completed"
+                },
+                {
+                  "name": "Cancelled",
+                  "value": "Cancelled"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Email Processed",
+              "displayName": "Email Processed",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        848,
+        -192
+      ],
+      "id": "a67c59da-2cdf-482b-9a4d-728ba68e8c7e",
+      "name": "Mark as In Progress",
+      "credentials": {
+        "airtableTokenApi": {
+          "name": "Airtable Account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Check for New Orders": {
+      "main": [
+        [
+          {
+            "node": "Find Pending Orders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Pending Orders": {
+      "main": [
+        [
+          {
+            "node": "Mark as Processing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark as Processing": {
+      "main": [
+        [
+          {
+            "node": "Generate AI Order Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify Operations Team": {
+      "main": [
+        [
+          {
+            "node": "Mark as In Progress",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark as Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate AI Order Summary": {
+      "main": [
+        [
+          {
+            "node": "Notify Operations Team",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "48d3e6fb-03ee-441c-aa04-1ab23643073e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9533bc21eb6f47d40cf4607bf5513ba025b820fb69b43636fa64f9cfeb81ec54"
+  },
+  "nodeGroups": [],
+  "id": "nP6f5D9jhZ6m5ilA",
+  "tags": []
+}

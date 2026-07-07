@@ -1,0 +1,13 @@
+# Personal development workflow
+workflows/ai-order-processing-pipeline-dev.json
+
+# Personal project files
+notes.md
+todo.md
+release-plan.md
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
