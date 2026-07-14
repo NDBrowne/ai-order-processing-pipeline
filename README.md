@@ -1,5 +1,9 @@
 # 🤖 AI Order Processing Pipeline
 
+<p align="center">
+  <img src="images/order-processing-banner.png" alt="AI Order Processing Pipeline Banner" width="100%">
+</p>
+
 An AI-powered **n8n workflow** that automates the processing of new customer orders by monitoring Airtable, generating professional order summaries with OpenAI, notifying the operations team through Gmail, and updating order statuses automatically.
 
 
